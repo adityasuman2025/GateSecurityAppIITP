@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".ScanResult">
     <LinearLayout
-        android:id="@+id/infoLayout"
+        android:id="@+id/entryInfoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
