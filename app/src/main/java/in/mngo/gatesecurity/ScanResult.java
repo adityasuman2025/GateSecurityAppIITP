@@ -11,8 +11,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +29,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class ScanResult extends AppCompatActivity {
+    RelativeLayout loadingAnimation;
+
     TextView personNameTextView;
     TextView personIdTextView;
     TextView entryInfoFeed;
@@ -162,6 +166,8 @@ public class ScanResult extends AppCompatActivity {
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
+                                                    loadingAnimation.setVisibility(View.GONE);
+
                                                     entryInfoLayout.setVisibility(View.VISIBLE);
                                                     setEntryInfoFeed("");
                                                 }
@@ -180,9 +186,11 @@ public class ScanResult extends AppCompatActivity {
             }
             else {
                 setEntryInfoFeed("Internet Connection is not available");
+                loadingAnimation.setVisibility(View.GONE);
             }
         } else {
             setEntryInfoFeed("Invalid QR Code");
+            loadingAnimation.setVisibility(View.GONE);
         }
 
     //clcikng on submit btn
@@ -192,7 +200,8 @@ public class ScanResult extends AppCompatActivity {
                 Toast.makeText(ScanResult.this, personEntryData.toString(), Toast.LENGTH_SHORT).show();
 
                 if( personEntryData.containsKey("name") && personEntryData.containsKey("roll") && personEntryData.containsKey("status")  && personEntryData.containsKey("gate")  && personEntryData.containsKey("count") && personEntryData.containsKey("reason") ) {
-                    setEntryInfoFeed("please wait");
+//                    setEntryInfoFeed("please wait");
+                    loadingAnimation.setVisibility(View.VISIBLE);
                 } else {
                     setEntryInfoFeed("Please fill all data");
                 }
@@ -256,6 +265,8 @@ public class ScanResult extends AppCompatActivity {
 
 //function to initialize views
     private void viewInitializer() {
+        loadingAnimation = findViewById(R.id.loadingAnimation);
+
         personNameTextView = findViewById(R.id.personNameTextView);
         personIdTextView = findViewById(R.id.personIdTextView);
         entryInfoFeed = findViewById(R.id.entryInfoFeed);
