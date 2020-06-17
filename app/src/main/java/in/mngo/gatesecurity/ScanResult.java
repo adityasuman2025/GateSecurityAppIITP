@@ -22,6 +22,8 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class ScanResult extends AppCompatActivity {
@@ -37,12 +39,15 @@ public class ScanResult extends AppCompatActivity {
 
     Button submitBtn;
 
+
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
     String type;
     JSONArray jsonArrayFromDatabase;
     String resultFromDatabase;
+
+    Map<String, String> personEntryData = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,8 @@ public class ScanResult extends AppCompatActivity {
         //setting name and id
             personNameTextView.setText(key_name);
             personIdTextView.setText(key_roll);
+            personEntryData.put( "name", key_name );
+            personEntryData.put( "roll", key_roll );
 
         //checking if phone if connected to net or not
             ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -182,12 +189,13 @@ public class ScanResult extends AppCompatActivity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String selectedStatus = sharedPreferences.getString("status", "DNE");
-                String selectedGate = sharedPreferences.getString("gate", "DNE");
-                String selectedPersonCount = sharedPreferences.getString("count", "DNE");
-                String selectedReason = sharedPreferences.getString("reason", "DNE");
+                Toast.makeText(ScanResult.this, personEntryData.toString(), Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(ScanResult.this, selectedStatus, Toast.LENGTH_SHORT).show();=
+                if( personEntryData.containsKey("name") && personEntryData.containsKey("roll") && personEntryData.containsKey("status")  && personEntryData.containsKey("gate")  && personEntryData.containsKey("count") && personEntryData.containsKey("reason") ) {
+                    setEntryInfoFeed("please wait");
+                } else {
+                    setEntryInfoFeed("Please fill all data");
+                }
             }
         });
     }
@@ -212,9 +220,11 @@ public class ScanResult extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                personEntryData.put( type, value );
+
                             //making cookie of the selected radio type
-                                editor.putString( type, value);
-                                editor.apply();
+//                                editor.putString( type, value);
+//                                editor.apply();
                             }
                         });
                     }
