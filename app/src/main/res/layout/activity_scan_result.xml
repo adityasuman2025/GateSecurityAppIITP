@@ -35,7 +35,7 @@
 
             <LinearLayout
                 android:id="@+id/entryInfoLayout"
-                android:visibility="gone"
+
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,7 +72,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp">
                     <TextView
                         android:text="Name"
                         android:textColor="@color/colorPrimary"
@@ -101,7 +102,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp">
                     <TextView
                         android:text="ID"
                         android:textColor="@color/colorPrimary"
@@ -130,35 +132,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
-                    <TextView
-                        android:text="Status"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="16dp"
-                        android:background="@color/grey"
-
-                        android:padding="5dp"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
-
-                    <RadioGroup
-                        android:id="@+id/statusRadio"
-                        android:padding="0dp"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_weight="3"
-                        android:background="@drawable/back"
-                        android:layout_margin="0dp">
-                    </RadioGroup>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp">
                     <TextView
                         android:text="Gate"
                         android:textColor="@color/colorPrimary"
@@ -186,7 +161,37 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp">
+                    <TextView
+                        android:text="Status"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16dp"
+                        android:background="@color/grey"
+
+                        android:padding="5dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <RadioGroup
+                        android:id="@+id/statusRadio"
+                        android:padding="0dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_weight="3"
+                        android:background="@drawable/back"
+                        android:layout_margin="0dp">
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp">
                     <TextView
                         android:text="Person #"
                         android:textColor="@color/colorPrimary"
@@ -214,7 +219,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp">
                     <TextView
                         android:text="Reason"
                         android:textColor="@color/colorPrimary"

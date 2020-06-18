@@ -119,7 +119,7 @@ public class ScanResult extends AppCompatActivity {
                             //parse JSON data
                                 try {
                                     jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                    createRadioButton( statusRadio, "status", RadioGroup.HORIZONTAL, jsonArrayFromDatabase );
+                                    createRadioButton( statusRadio, "status", jsonArrayFromDatabase );
                                 } catch (JSONException ex) {
                                     ex.printStackTrace();
                                 } catch (Exception e) {
@@ -140,7 +140,7 @@ public class ScanResult extends AppCompatActivity {
                                 //parse JSON data
                                     try {
                                         jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                        createRadioButton( gateRadio, "gate", RadioGroup.HORIZONTAL, jsonArrayFromDatabase );
+                                        createRadioButton( gateRadio, "gate", jsonArrayFromDatabase );
                                     } catch (JSONException ex) {
                                         ex.printStackTrace();
                                     } catch (Exception e) {
@@ -161,7 +161,7 @@ public class ScanResult extends AppCompatActivity {
                                     //parse JSON data
                                         try {
                                             jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                            createRadioButton( personCountRadio, "count", RadioGroup.VERTICAL, jsonArrayFromDatabase );
+                                            createRadioButton( personCountRadio, "count", jsonArrayFromDatabase );
                                         } catch (JSONException ex) {
                                             ex.printStackTrace();
                                         } catch (Exception e) {
@@ -182,7 +182,7 @@ public class ScanResult extends AppCompatActivity {
                                             //parse JSON data
                                             try {
                                                 jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                                createRadioButton( reasonRadio, "reason", RadioGroup.VERTICAL, jsonArrayFromDatabase );
+                                                createRadioButton( reasonRadio, "reason", jsonArrayFromDatabase );
                                             } catch (JSONException ex) {
                                                 ex.printStackTrace();
                                             } catch (Exception e) {
@@ -283,11 +283,20 @@ public class ScanResult extends AppCompatActivity {
     }
 
 //function to render radio buttons from json  coming from database
-    private void createRadioButton(final RadioGroup radioView, final String type, int orientation, JSONArray jsonArrayFromDatabase ) {
+    private void createRadioButton(final RadioGroup radioView, final String type, JSONArray jsonArrayFromDatabase ) {
         try {
             final RadioGroup rg = new RadioGroup(this); //create the RadioGroup
+
+            int length = jsonArrayFromDatabase.length();
+
+        //setting orientation of the radio group layout
+            int orientation = RadioGroup.HORIZONTAL;
+            if( length > 4 ) {
+                orientation = RadioGroup.VERTICAL;
+            }
             rg.setOrientation(orientation);//or RadioGroup.VERTICAL
 
+        //creating radio buttons
             JSONObject jo = null;
             for(int i = 0; i < jsonArrayFromDatabase.length(); i++ ) {
                 jo = jsonArrayFromDatabase.getJSONObject(i);
@@ -296,6 +305,7 @@ public class ScanResult extends AppCompatActivity {
 
                 RadioButton rb = new RadioButton(this);
                 rb.setText( value );
+
                 rb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -303,10 +313,22 @@ public class ScanResult extends AppCompatActivity {
                             @Override
                             public void run() {
                                 personEntryData.put( type, value );
+
+                                if( type.equals("gate") ) {
+                                    editor.putString(type, value);
+                                    editor.apply();
+                                }
                             }
                         });
                     }
                 });
+
+            //for auto selecting last used gate
+                final String lastUsedGate = sharedPreferences.getString( type, "DNE");
+                if( type.equals("gate") && value.equals(lastUsedGate) ) {
+                    rb.setChecked(true);
+                }
+
                 rg.addView( rb );
             }
 
