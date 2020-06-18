@@ -26,6 +26,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,66 +75,50 @@ public class ScanResult extends AppCompatActivity {
         String scannedResult= getIntent().getStringExtra("scannedResult");
 
         String test[] = scannedResult.split("\n");
-        if(test.length == 3) {
+        if( test.length == 3 ) {
             String key_name = test[0];
             final String key_roll = test[1];
             String key_secret = test[2];
 
-        //setting name and id
-            personNameTextView.setText(key_name);
-            personIdTextView.setText(key_roll);
-            personEntryData.put( "name", key_name );
-            personEntryData.put( "roll", key_roll );
+        //verifying the secret in qr with actual secret
+            String encryption_key = "BatMaN!007GurUjI";
+            String my_secret = getMd5( key_roll + encryption_key );
 
-        //checking if phone if connected to net or not
-            ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-            if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
-            //fetching data from database in another thread
-                new Thread(new Runnable() {
-                    public void run() {
-                    //fetching person;s image
-                        String type = "get_person_photo";
-                        try {
-                            Bitmap person_imageBitmap = new ServerActions().execute( type, key_roll.toLowerCase() ).get();
-                            if( person_imageBitmap != null ) {
-                                displayPersonImage( person_imageBitmap );
-                            }
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            if( key_secret.equals( my_secret ) ) {
+            //setting name and id
+                personNameTextView.setText(key_name);
+                personIdTextView.setText(key_roll);
+                personEntryData.put( "name", key_name );
+                personEntryData.put( "roll", key_roll );
 
-                        try {
-                        //getting status from database
-                            type = "get_status";
-
-                            resultFromDatabase = new DatabaseActions().execute( type ).get();
-                            if( resultFromDatabase.equals("0") ) {
-                                setEntryInfoFeed("Failed to get status from database");
-                            } else if( resultFromDatabase.equals("-100") ) {
-                                setEntryInfoFeed("Database connection failed");
-                            } else if( resultFromDatabase.equals("Something went wrong") ) {
-                                setEntryInfoFeed("Something went wrong");
-                            } else {
-                            //parse JSON data
-                                try {
-                                    jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                    createRadioButton( statusRadio, "status", jsonArrayFromDatabase );
-                                } catch (JSONException ex) {
-                                    ex.printStackTrace();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+            //checking if phone if connected to net or not
+                ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+                if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                //fetching data from database in another thread
+                    new Thread(new Runnable() {
+                        public void run() {
+                        //fetching person;s image
+                            String type = "get_person_photo";
+                            try {
+                                Bitmap person_imageBitmap = new ServerActions().execute( type, key_roll.toLowerCase() ).get();
+                                if( person_imageBitmap != null ) {
+                                    displayPersonImage( person_imageBitmap );
                                 }
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
-                            //getting gates from database
-                                type = "get_gates";
+                            try {
+                            //getting status from database
+                                type = "get_status";
+
                                 resultFromDatabase = new DatabaseActions().execute( type ).get();
-
                                 if( resultFromDatabase.equals("0") ) {
-                                    setEntryInfoFeed("Failed to get gates from database");
+                                    setEntryInfoFeed("Failed to get status from database");
                                 } else if( resultFromDatabase.equals("-100") ) {
                                     setEntryInfoFeed("Database connection failed");
                                 } else if( resultFromDatabase.equals("Something went wrong") ) {
@@ -140,19 +127,19 @@ public class ScanResult extends AppCompatActivity {
                                 //parse JSON data
                                     try {
                                         jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                        createRadioButton( gateRadio, "gate", jsonArrayFromDatabase );
+                                        createRadioButton( statusRadio, "status", jsonArrayFromDatabase );
                                     } catch (JSONException ex) {
                                         ex.printStackTrace();
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
 
-                                //getting person count from database
-                                    type = "get_count_of_persons";
+                                //getting gates from database
+                                    type = "get_gates";
                                     resultFromDatabase = new DatabaseActions().execute( type ).get();
 
                                     if( resultFromDatabase.equals("0") ) {
-                                        setEntryInfoFeed("Failed to get count of person from database");
+                                        setEntryInfoFeed("Failed to get gates from database");
                                     } else if( resultFromDatabase.equals("-100") ) {
                                         setEntryInfoFeed("Database connection failed");
                                     } else if( resultFromDatabase.equals("Something went wrong") ) {
@@ -161,58 +148,82 @@ public class ScanResult extends AppCompatActivity {
                                     //parse JSON data
                                         try {
                                             jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                            createRadioButton( personCountRadio, "count", jsonArrayFromDatabase );
+                                            createRadioButton( gateRadio, "gate", jsonArrayFromDatabase );
                                         } catch (JSONException ex) {
                                             ex.printStackTrace();
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
 
-                                    //getting reasons from database
-                                        type = "get_reasons";
+                                    //getting person count from database
+                                        type = "get_count_of_persons";
                                         resultFromDatabase = new DatabaseActions().execute( type ).get();
 
                                         if( resultFromDatabase.equals("0") ) {
-                                            setEntryInfoFeed("Failed to get reasons from database");
+                                            setEntryInfoFeed("Failed to get count of person from database");
                                         } else if( resultFromDatabase.equals("-100") ) {
                                             setEntryInfoFeed("Database connection failed");
                                         } else if( resultFromDatabase.equals("Something went wrong") ) {
                                             setEntryInfoFeed("Something went wrong");
                                         } else {
-                                            //parse JSON data
+                                        //parse JSON data
                                             try {
                                                 jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                                createRadioButton( reasonRadio, "reason", jsonArrayFromDatabase );
+                                                createRadioButton( personCountRadio, "count", jsonArrayFromDatabase );
                                             } catch (JSONException ex) {
                                                 ex.printStackTrace();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
 
-                                        //displaying the entry info layout
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    entryInfoLayout.setVisibility(View.VISIBLE);
-                                                    setEntryInfoFeed("");
+                                        //getting reasons from database
+                                            type = "get_reasons";
+                                            resultFromDatabase = new DatabaseActions().execute( type ).get();
+
+                                            if( resultFromDatabase.equals("0") ) {
+                                                setEntryInfoFeed("Failed to get reasons from database");
+                                            } else if( resultFromDatabase.equals("-100") ) {
+                                                setEntryInfoFeed("Database connection failed");
+                                            } else if( resultFromDatabase.equals("Something went wrong") ) {
+                                                setEntryInfoFeed("Something went wrong");
+                                            } else {
+                                                //parse JSON data
+                                                try {
+                                                    jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
+                                                    createRadioButton( reasonRadio, "reason", jsonArrayFromDatabase );
+                                                } catch (JSONException ex) {
+                                                    ex.printStackTrace();
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
                                                 }
-                                            });
+
+                                            //displaying the entry info layout
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        entryInfoLayout.setVisibility(View.VISIBLE);
+                                                        setEntryInfoFeed("");
+                                                    }
+                                                });
+                                            }
                                         }
                                     }
                                 }
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                    }
-                }).start();
-            }
-            else {
-                setEntryInfoFeed("Internet Connection is not available");
+                    }).start();
+                }
+                else {
+                    setEntryInfoFeed("Internet Connection is not available");
+                }
+            } else {
+                setEntryInfoFeed( "Invalid QR Code" );
             }
         } else {
             setEntryInfoFeed("Invalid QR Code");
@@ -282,6 +293,30 @@ public class ScanResult extends AppCompatActivity {
         });
     }
 
+//function to do md5 hash
+    public static String getMd5(String input) {
+        try {
+            // Static getInstance method is called with hashing MD5
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            // digest() method is called to calculate message digest
+            //  of an input digest() return array of byte
+            byte[] messageDigest = md.digest(input.getBytes());
+
+            // Convert byte array into signum representation
+            BigInteger no = new BigInteger(1, messageDigest);
+
+            // Convert message digest into hex value
+            String hashtext = no.toString(16);
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 //function to render radio buttons from json  coming from database
     private void createRadioButton(final RadioGroup radioView, final String type, JSONArray jsonArrayFromDatabase ) {
         try {
@@ -303,7 +338,7 @@ public class ScanResult extends AppCompatActivity {
                 String id = jo.getString("id");
                 final String value = jo.getString(type);
 
-                RadioButton rb = new RadioButton(this);
+                final RadioButton rb = new RadioButton(this);
                 rb.setText( value );
 
                 rb.setOnClickListener(new View.OnClickListener() {
@@ -314,6 +349,7 @@ public class ScanResult extends AppCompatActivity {
                             public void run() {
                                 personEntryData.put( type, value );
 
+                            //making cookie for lastUsedGate
                                 if( type.equals("gate") ) {
                                     editor.putString(type, value);
                                     editor.apply();
@@ -323,11 +359,11 @@ public class ScanResult extends AppCompatActivity {
                     }
                 });
 
-            //for auto selecting last used gate
-                final String lastUsedGate = sharedPreferences.getString( type, "DNE");
-                if( type.equals("gate") && value.equals(lastUsedGate) ) {
-                    rb.setChecked(true);
-                }
+//            //for auto selecting last used gate
+//                final String lastUsedGate = sharedPreferences.getString( type, "DNE");
+//                if( type.equals("gate") && value.equals(lastUsedGate) ) {
+//                    rb.setChecked( true );
+//                }
 
                 rg.addView( rb );
             }

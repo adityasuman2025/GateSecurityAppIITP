@@ -19,7 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:paddingTop="10dp">
                 <TextView
                     android:id="@+id/entryInfoFeed"
 
@@ -40,19 +40,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <TextView
-                    android:text="Entry Info"
-                    android:textSize="22dp"
-                    android:textColor="@color/colorAccent"
-                    android:textFontWeight="900"
-                    android:background="@color/grey"
-
-                    android:layout_marginHorizontal="10dp"
-                    android:paddingVertical="2dp"
-                    android:gravity="center_horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/logo" />
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/personImageView"
@@ -251,10 +238,12 @@
                     android:background="@color/colorAccent"
                     android:textColor="@color/white"
 
-                    android:layout_marginTop="20dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginVertical="3dp"
+                    android:padding="0dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="40dp"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
