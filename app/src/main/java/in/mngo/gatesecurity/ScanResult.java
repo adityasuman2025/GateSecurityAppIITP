@@ -4,12 +4,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -31,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 public class ScanResult extends AppCompatActivity {
     RelativeLayout loadingAnimation;
 
+    ImageView personImageView;
     TextView personNameTextView;
     TextView personIdTextView;
     TextView entryInfoFeed;
@@ -70,7 +73,7 @@ public class ScanResult extends AppCompatActivity {
         String test[] = scannedResult.split("\n");
         if(test.length == 3) {
             String key_name = test[0];
-            String key_roll = test[1];
+            final String key_roll = test[1];
             String key_secret = test[2];
 
         //setting name and id
@@ -85,6 +88,21 @@ public class ScanResult extends AppCompatActivity {
             //fetching data from database in another thread
                 new Thread(new Runnable() {
                     public void run() {
+                    //fetching person;s image
+                        String type = "get_person_photo";
+                        try {
+                            Bitmap person_imageBitmap = new ServerActions().execute( type, key_roll.toLowerCase() ).get();
+                            if( person_imageBitmap != null ) {
+                                displayPersonImage( person_imageBitmap );
+                            }
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
                         try {
                         //getting status from database
                             type = "get_status";
@@ -239,11 +257,15 @@ public class ScanResult extends AppCompatActivity {
                                     } else {
                                         setEntryInfoFeed("unknown error");
                                     }
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
-                        });
+                        }).start();
                     } else {
                         setEntryInfoFeed("Internet Connection is not available");
                     }
@@ -296,6 +318,16 @@ public class ScanResult extends AppCompatActivity {
         }
     }
 
+// displaying person's image
+    private void displayPersonImage(final Bitmap person_imageBitmap ) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                personImageView.setImageBitmap( person_imageBitmap );
+            }
+        });
+    }
+
 //showing feed
     private void setEntryInfoFeed( final String text ) {
         runOnUiThread(new Runnable() {
@@ -309,18 +341,19 @@ public class ScanResult extends AppCompatActivity {
 
 //function to initialize views
     private void viewInitializer() {
-        loadingAnimation = findViewById(R.id.loadingAnimation);
+        loadingAnimation                = findViewById(R.id.loadingAnimation);
 
-        personNameTextView = findViewById(R.id.personNameTextView);
-        personIdTextView = findViewById(R.id.personIdTextView);
-        entryInfoFeed = findViewById(R.id.entryInfoFeed);
-        entryInfoLayout = findViewById(R.id.entryInfoLayout);
+        personImageView                 = findViewById(R.id.personImageView);
+        personNameTextView              = findViewById(R.id.personNameTextView);
+        personIdTextView                = findViewById(R.id.personIdTextView);
+        entryInfoFeed                   = findViewById(R.id.entryInfoFeed);
+        entryInfoLayout                 = findViewById(R.id.entryInfoLayout);
 
-        statusRadio = findViewById(R.id.statusRadio);
-        gateRadio = findViewById(R.id.gateRadio);
-        personCountRadio = findViewById(R.id.personCountRadio);
-        reasonRadio = findViewById(R.id.reasonRadio);
+        statusRadio                     = findViewById(R.id.statusRadio);
+        gateRadio                       = findViewById(R.id.gateRadio);
+        personCountRadio                = findViewById(R.id.personCountRadio);
+        reasonRadio                     = findViewById(R.id.reasonRadio);
 
-        submitBtn = findViewById(R.id.submitBtn);
+        submitBtn                       = findViewById(R.id.submitBtn);
     }
 }

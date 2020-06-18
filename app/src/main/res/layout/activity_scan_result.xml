@@ -36,6 +36,28 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/logo" />
 
+<!--                <ImageView-->
+<!--                    android:id="@+id/personImageView"-->
+<!--                    android:src="@drawable/user"-->
+
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:maxHeight="300dp"/>-->
+
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/personImageView"
+                    android:src="@drawable/user"
+
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal"
+
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_width="4dp"
+                    app:civ_shadow="true"
+                    app:civ_shadow_radius="5dp"
+                    app:civ_shadow_color="@color/colorPrimary"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
