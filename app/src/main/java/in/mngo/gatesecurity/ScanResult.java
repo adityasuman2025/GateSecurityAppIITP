@@ -86,7 +86,7 @@ public class ScanResult extends AppCompatActivity {
                 new Thread(new Runnable() {
                     public void run() {
                         try {
-                        //getting status form database
+                        //getting status from database
                             type = "get_status";
 
                             resultFromDatabase = new DatabaseActions().execute( type ).get();
@@ -103,9 +103,11 @@ public class ScanResult extends AppCompatActivity {
                                     createRadioButton( statusRadio, "status", RadioGroup.HORIZONTAL, jsonArrayFromDatabase );
                                 } catch (JSONException ex) {
                                     ex.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
 
-                            //getting status form database
+                            //getting gates from database
                                 type = "get_gates";
                                 resultFromDatabase = new DatabaseActions().execute( type ).get();
 
@@ -122,9 +124,11 @@ public class ScanResult extends AppCompatActivity {
                                         createRadioButton( gateRadio, "gate", RadioGroup.HORIZONTAL, jsonArrayFromDatabase );
                                     } catch (JSONException ex) {
                                         ex.printStackTrace();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
 
-                                //getting status form database
+                                //getting person count from database
                                     type = "get_count_of_persons";
                                     resultFromDatabase = new DatabaseActions().execute( type ).get();
 
@@ -141,9 +145,11 @@ public class ScanResult extends AppCompatActivity {
                                             createRadioButton( personCountRadio, "count", RadioGroup.VERTICAL, jsonArrayFromDatabase );
                                         } catch (JSONException ex) {
                                             ex.printStackTrace();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
 
-                                    //getting status form database
+                                    //getting reasons from database
                                         type = "get_reasons";
                                         resultFromDatabase = new DatabaseActions().execute( type ).get();
 
@@ -160,14 +166,14 @@ public class ScanResult extends AppCompatActivity {
                                                 createRadioButton( reasonRadio, "reason", RadioGroup.VERTICAL, jsonArrayFromDatabase );
                                             } catch (JSONException ex) {
                                                 ex.printStackTrace();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
 
                                         //displaying the entry info layout
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    loadingAnimation.setVisibility(View.GONE);
-
                                                     entryInfoLayout.setVisibility(View.VISIBLE);
                                                     setEntryInfoFeed("");
                                                 }
@@ -180,28 +186,67 @@ public class ScanResult extends AppCompatActivity {
                             e.printStackTrace();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }).start();
             }
             else {
                 setEntryInfoFeed("Internet Connection is not available");
-                loadingAnimation.setVisibility(View.GONE);
             }
         } else {
             setEntryInfoFeed("Invalid QR Code");
-            loadingAnimation.setVisibility(View.GONE);
         }
 
-    //clcikng on submit btn
+    //clicking on submit btn
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(ScanResult.this, personEntryData.toString(), Toast.LENGTH_SHORT).show();
-
-                if( personEntryData.containsKey("name") && personEntryData.containsKey("roll") && personEntryData.containsKey("status")  && personEntryData.containsKey("gate")  && personEntryData.containsKey("count") && personEntryData.containsKey("reason") ) {
-//                    setEntryInfoFeed("please wait");
+                if( personEntryData.containsKey("name") && personEntryData.containsKey("roll") && personEntryData.containsKey("status") && personEntryData.containsKey("gate") && personEntryData.containsKey("count") && personEntryData.containsKey("reason") ) {
+                    setEntryInfoFeed("");
                     loadingAnimation.setVisibility(View.VISIBLE);
+
+                //checking if phone if connected to net or not
+                    ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+                    if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED) {
+                    //sending data to database in a another thread
+                        new Thread(new Runnable() {
+                            public void run() {
+                                try {
+                                    String name     = personEntryData.get("name");
+                                    String roll     = personEntryData.get("roll");
+                                    String status   = personEntryData.get("status");
+                                    String gate     = personEntryData.get("gate");
+                                    String count    = personEntryData.get("count");
+                                    String reason   = personEntryData.get("reason");
+
+                                    type = "insert_person_entry";
+
+                                    resultFromDatabase = new DatabaseActions().execute( type, name, roll, status, gate, count, reason ).get();
+                                    if (resultFromDatabase.equals("0")) {
+                                        setEntryInfoFeed("Failed to get status from database");
+                                    } else if (resultFromDatabase.equals("-100")) {
+                                        setEntryInfoFeed("Database connection failed");
+                                    } else if (resultFromDatabase.equals("-1")) {
+                                        setEntryInfoFeed("Something went wrong");
+                                    } else if (resultFromDatabase.equals("-20")) {
+                                        setEntryInfoFeed("Invalid status");
+                                    } else if (resultFromDatabase.equals("Something went wrong")) {
+                                        setEntryInfoFeed("Something went wrong");
+                                    } else if (resultFromDatabase.equals("1")) {
+                                        setEntryInfoFeed("success");
+                                    } else {
+                                        setEntryInfoFeed("unknown error");
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    } else {
+                        setEntryInfoFeed("Internet Connection is not available");
+                    }
                 } else {
                     setEntryInfoFeed("Please fill all data");
                 }
@@ -230,10 +275,6 @@ public class ScanResult extends AppCompatActivity {
                             @Override
                             public void run() {
                                 personEntryData.put( type, value );
-
-                            //making cookie of the selected radio type
-//                                editor.putString( type, value);
-//                                editor.apply();
                             }
                         });
                     }
@@ -250,6 +291,8 @@ public class ScanResult extends AppCompatActivity {
             });
         } catch (JSONException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -259,6 +302,7 @@ public class ScanResult extends AppCompatActivity {
             @Override
             public void run() {
                 entryInfoFeed.setText( text );
+                loadingAnimation.setVisibility(View.GONE);
             }
         });
     }

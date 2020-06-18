@@ -26,13 +26,17 @@ public class DatabaseActions extends AsyncTask<String,Void,String> {
         String result = "Something went wrong";
         URL url;
 
-        if (type.equals("verify_login")) {
-            String login_url = base_url + "verify_login.php";
+        if (type.equals("insert_person_entry")) {
+            String login_url = base_url + "insert_person_entry.php";
             try {
-                String login_username = params[1];
-                String login_password = params[2];
+                String name     = params[1];
+                String roll     = params[2];
+                String status   = params[3];
+                String gate     = params[4];
+                String count    = params[5];
+                String reason   = params[6];
 
-                //connecting with server
+            //connecting with server
                 url = new URL(login_url);
                 HttpURLConnection httpURLConnection = null;
                 httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -40,12 +44,17 @@ public class DatabaseActions extends AsyncTask<String,Void,String> {
                 httpURLConnection.setDoOutput(true);
                 httpURLConnection.setDoInput(true);
 
-                //sending data to the server
+            //sending data to the server
                 OutputStream outputStream = httpURLConnection.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
 
-                String post_data = URLEncoder.encode("login_username", "UTF-8") + "=" + URLEncoder.encode(login_username, "UTF-8") + "&"
-                        + URLEncoder.encode("login_password", "UTF-8") + "=" + URLEncoder.encode(login_password, "UTF-8");
+                String post_data =
+                        URLEncoder.encode("name", "UTF-8") + "=" + URLEncoder.encode( name, "UTF-8") + "&"
+                        + URLEncoder.encode("roll", "UTF-8") + "=" + URLEncoder.encode( roll, "UTF-8") + "&"
+                        + URLEncoder.encode("status", "UTF-8") + "=" + URLEncoder.encode( status, "UTF-8") + "&"
+                        + URLEncoder.encode("gate", "UTF-8") + "=" + URLEncoder.encode( gate, "UTF-8") + "&"
+                        + URLEncoder.encode("count", "UTF-8") + "=" + URLEncoder.encode( count, "UTF-8") + "&"
+                        + URLEncoder.encode("reason", "UTF-8") + "=" + URLEncoder.encode( reason, "UTF-8");
 
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
