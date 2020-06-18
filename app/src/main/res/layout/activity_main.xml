@@ -13,19 +13,24 @@
         android:layout_marginTop="100dp">
         <ImageView
             android:id="@+id/logo"
+            android:src="@drawable/iitp_logo"
+
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/iitp_logo" />
+            android:layout_marginBottom="30dp" />
 
         <TextView
+            android:layout_alignBottom="@+id/logo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="IIT Patna Gate Entry"
             android:gravity="center_horizontal"
+            android:layout_margin="10dp"
+
+            android:background="@color/grey"
+            android:text="IIT Patna Gate Entry"
             android:textSize="30dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:textFontWeight="900"
-            android:layout_alignBottom="@+id/logo"/>
+            android:textColor="@color/colorAccent"
+            android:textFontWeight="900" />
     </LinearLayout>
 
     <Button

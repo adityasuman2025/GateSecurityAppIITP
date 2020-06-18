@@ -3,6 +3,7 @@ package in.mngo.gatesecurity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
@@ -254,6 +255,11 @@ public class ScanResult extends AppCompatActivity {
                                         setEntryInfoFeed("Something went wrong");
                                     } else if (resultFromDatabase.equals("1")) {
                                         setEntryInfoFeed("success");
+
+                                    //redirecting to the success screen
+                                        Intent SuccessIntent = new Intent( ScanResult.this, SuccessScreen.class );
+                                        startActivity( SuccessIntent );
+                                        finish();
                                     } else {
                                         setEntryInfoFeed("unknown error");
                                     }
