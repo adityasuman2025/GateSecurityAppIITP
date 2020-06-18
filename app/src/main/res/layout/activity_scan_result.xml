@@ -14,6 +14,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <TextView
+                    android:id="@+id/entryInfoFeed"
+
+                    android:text=""
+                    android:textAlignment="center"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="13dp"
+                    android:textColor="@color/red"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/entryInfoLayout"
                 android:visibility="gone"
@@ -21,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:paddingHorizontal="10dp">
                 <TextView
                     android:text="Entry Info"
                     android:textSize="22dp"
@@ -29,7 +48,7 @@
                     android:textFontWeight="900"
                     android:background="@color/grey"
 
-                    android:layout_margin="5dp"
+                    android:layout_marginHorizontal="5dp"
                     android:paddingVertical="2dp"
                     android:gravity="center_horizontal"
                     android:layout_width="match_parent"
@@ -235,28 +254,9 @@
                     android:background="@color/colorPrimary"
                     android:textColor="@color/white"
 
-                    android:layout_marginTop="20dp"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="10dp"
-                android:padding="10dp">
-                <TextView
-                    android:id="@+id/entryInfoFeed"
-
-                    android:text=""
-                    android:textAlignment="center"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="16dp"
-                    android:textColor="@color/red"
-
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
         </LinearLayout>
