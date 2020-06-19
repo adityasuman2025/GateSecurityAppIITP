@@ -1,7 +1,6 @@
 package in.mngo.gatesecurity;
 
 import android.os.AsyncTask;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,23 +17,27 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 public class DatabaseActions extends AsyncTask<String,Void,String> {
-    String base_url = "http://mngo.in/gate_security_api/";
+    String base_url;
 
     @Override
     protected String doInBackground(String... params) {
-        String type = params[0];
+
+        String server_url = params[0];
+        String type = params[1];
         String result = "Something went wrong";
         URL url;
+
+        base_url = server_url + "/gate_security_api/";
 
         if (type.equals("insert_person_entry")) {
             String login_url = base_url + "insert_person_entry.php";
             try {
-                String name     = params[1];
-                String roll     = params[2];
-                String status   = params[3];
-                String gate     = params[4];
-                String count    = params[5];
-                String reason   = params[6];
+                String name     = params[2];
+                String roll     = params[3];
+                String status   = params[4];
+                String gate     = params[5];
+                String count    = params[6];
+                String reason   = params[7];
 
             //connecting with server
                 url = new URL(login_url);

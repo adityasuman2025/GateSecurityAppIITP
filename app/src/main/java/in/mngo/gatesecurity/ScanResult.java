@@ -82,7 +82,7 @@ public class ScanResult extends AppCompatActivity {
             finish();
 
         }
-        Toast.makeText(ScanResult.this, server_url, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(ScanResult.this, server_url, Toast.LENGTH_SHORT).show();
 
     //checking QR Code
         String scannedResult= getIntent().getStringExtra("scannedResult");
@@ -110,7 +110,7 @@ public class ScanResult extends AppCompatActivity {
                 //fetching data from database in another thread
                     new Thread(new Runnable() {
                         public void run() {
-                        //fetching person;s image
+                        //fetching person's image
                             String type = "get_person_photo";
                             try {
                                 Bitmap person_imageBitmap = new ServerActions().execute( server_url, type, key_roll.toLowerCase() ).get();
@@ -129,7 +129,7 @@ public class ScanResult extends AppCompatActivity {
                             //getting status from database
                                 type = "get_status";
 
-                                resultFromDatabase = new DatabaseActions().execute( type ).get();
+                                resultFromDatabase = new DatabaseActions().execute( server_url, type ).get();
                                 if( resultFromDatabase.equals("0") ) {
                                     setEntryInfoFeed("Failed to get status from database");
                                 } else if( resultFromDatabase.equals("-100") ) {
@@ -149,7 +149,7 @@ public class ScanResult extends AppCompatActivity {
 
                                 //getting gates from database
                                     type = "get_gates";
-                                    resultFromDatabase = new DatabaseActions().execute( type ).get();
+                                    resultFromDatabase = new DatabaseActions().execute( server_url, type ).get();
 
                                     if( resultFromDatabase.equals("0") ) {
                                         setEntryInfoFeed("Failed to get gates from database");
@@ -170,7 +170,7 @@ public class ScanResult extends AppCompatActivity {
 
                                     //getting person count from database
                                         type = "get_count_of_persons";
-                                        resultFromDatabase = new DatabaseActions().execute( type ).get();
+                                        resultFromDatabase = new DatabaseActions().execute( server_url, type ).get();
 
                                         if( resultFromDatabase.equals("0") ) {
                                             setEntryInfoFeed("Failed to get count of person from database");
@@ -191,7 +191,7 @@ public class ScanResult extends AppCompatActivity {
 
                                         //getting reasons from database
                                             type = "get_reasons";
-                                            resultFromDatabase = new DatabaseActions().execute( type ).get();
+                                            resultFromDatabase = new DatabaseActions().execute( server_url, type ).get();
 
                                             if( resultFromDatabase.equals("0") ) {
                                                 setEntryInfoFeed("Failed to get reasons from database");
@@ -266,7 +266,7 @@ public class ScanResult extends AppCompatActivity {
 
                                     type = "insert_person_entry";
 
-                                    resultFromDatabase = new DatabaseActions().execute( type, name, roll, status, gate, count, reason ).get();
+                                    resultFromDatabase = new DatabaseActions().execute( server_url, type, name, roll, status, gate, count, reason ).get();
                                     if (resultFromDatabase.equals("0")) {
                                         setEntryInfoFeed("Failed to get status from database");
                                     } else if (resultFromDatabase.equals("-100")) {
