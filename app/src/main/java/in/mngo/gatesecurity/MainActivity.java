@@ -1,53 +1,59 @@
 package in.mngo.gatesecurity;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    Button scanPersonBtn;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
+    EditText serverUrlInput;
+    Button continueBtn;
+    TextView feed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        scanPersonBtn = findViewById(R.id.scanPersonBtn);
+        serverUrlInput = findViewById(R.id.serverUrlInput);
+        continueBtn = findViewById(R.id.continueBtn);
+        feed = findViewById(R.id.feed);
 
-        scanPersonBtn.setOnClickListener(new View.OnClickListener() {
+        //checking cookies
+        sharedPreferences = this.getSharedPreferences("AppData", Context.MODE_PRIVATE );
+        editor = sharedPreferences.edit();
+
+    //checking server url
+        String server_url = sharedPreferences.getString( "server_url", "DNE");
+        if( !server_url.equals("DNE") ) {
+            Intent HomeIntent = new Intent(MainActivity.this, Home.class);
+            startActivity(HomeIntent);
+        }
+
+    //on clicking on continue btn
+        continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentIntegrator intentIntegrator = new IntentIntegrator(MainActivity.this);
-                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-                intentIntegrator.setCameraId(0);
-                intentIntegrator.setOrientationLocked(true);
-                intentIntegrator.setPrompt("scanning");
-                intentIntegrator.setBeepEnabled(true);
-                intentIntegrator.setCaptureActivity(CaptureActivityPortrait.class);
-                intentIntegrator.initiateScan();
+                String serverUrl = serverUrlInput.getText().toString().trim();
+                if( !serverUrl.equals("") ) {
+                    editor.putString( "server_url", serverUrl );
+                    editor.apply();
+
+                    Intent HomeIntent = new Intent(MainActivity.this, Home.class);
+                    startActivity(HomeIntent);
+                } else {
+                    feed.setText("Please enter a valid server url");
+                }
             }
         });
-    }
-
-//for getting results after scanning the qr code
-    @Override
-    protected void onActivityResult( int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        final IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
-        if (result != null && result.getContents() != null) {
-            String scannedResult = result.getContents();
-
-            Intent scanResultIntent = new Intent(MainActivity.this, ScanResult.class).putExtra("scannedResult", scannedResult );;
-            startActivity(scanResultIntent);
-        }
     }
 }

@@ -50,11 +50,12 @@ public class ScanResult extends AppCompatActivity {
 
     Button submitBtn;
 
-
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
+    String server_url;
     String type;
+
     JSONArray jsonArrayFromDatabase;
     String resultFromDatabase;
 
@@ -70,6 +71,18 @@ public class ScanResult extends AppCompatActivity {
     //checking cookies
         sharedPreferences = this.getSharedPreferences("AppData", Context.MODE_PRIVATE );
         editor = sharedPreferences.edit();
+
+    //checking server url //if does not exist then redirecting to the add server screen
+        server_url = sharedPreferences.getString( "server_url", "DNE");
+        if( server_url.equals("DNE") || server_url.equals("") ) {
+            editor.remove("server_url").commit();
+
+            Intent MainIntent = new Intent(ScanResult.this, MainActivity.class);
+            startActivity(MainIntent);
+            finish();
+
+        }
+        Toast.makeText(ScanResult.this, server_url, Toast.LENGTH_SHORT).show();
 
     //checking QR Code
         String scannedResult= getIntent().getStringExtra("scannedResult");
@@ -100,7 +113,7 @@ public class ScanResult extends AppCompatActivity {
                         //fetching person;s image
                             String type = "get_person_photo";
                             try {
-                                Bitmap person_imageBitmap = new ServerActions().execute( type, key_roll.toLowerCase() ).get();
+                                Bitmap person_imageBitmap = new ServerActions().execute( server_url, type, key_roll.toLowerCase() ).get();
                                 if( person_imageBitmap != null ) {
                                     displayPersonImage( person_imageBitmap );
                                 }
