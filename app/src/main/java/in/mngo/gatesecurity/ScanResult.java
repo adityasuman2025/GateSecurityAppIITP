@@ -105,7 +105,7 @@ public class ScanResult extends AppCompatActivity {
                     new Thread(new Runnable() {
                         public void run() {
                         //fetching person's image
-                            String type = "get_person_photo";
+                            type = "get_person_photo";
                             try {
                                 Bitmap person_imageBitmap = new ServerActions().execute( server_url, type, key_roll.toLowerCase() ).get();
                                 if( person_imageBitmap != null ) {
@@ -325,7 +325,7 @@ public class ScanResult extends AppCompatActivity {
     }
 
 //function to render radio buttons from json  coming from database
-    private void createRadioButton(final RadioGroup radioView, final String type, JSONArray jsonArrayFromDatabase ) {
+    public void createRadioButton(final RadioGroup radioView, final String type, JSONArray jsonArrayFromDatabase ) {
         try {
             final RadioGroup rg = new RadioGroup(this); //create the RadioGroup
 
