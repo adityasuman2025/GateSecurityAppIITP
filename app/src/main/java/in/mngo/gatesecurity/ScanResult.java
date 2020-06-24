@@ -75,7 +75,6 @@ public class ScanResult extends AppCompatActivity {
             Intent MainIntent = new Intent(ScanResult.this, MainActivity.class);
             startActivity(MainIntent);
             finish();
-
         }
 
     //checking QR Code
@@ -162,57 +161,35 @@ public class ScanResult extends AppCompatActivity {
                                             e.printStackTrace();
                                         }
 
-                                    //getting person count from database
-                                        type = "get_count_of_persons";
+                                    //getting reasons from database
+                                        type = "get_reasons";
                                         resultFromDatabase = new DatabaseActions().execute( server_url, type ).get();
 
                                         if( resultFromDatabase.equals("0") ) {
-                                            setEntryInfoFeed("Failed to get count of person from database");
+                                            setEntryInfoFeed("Failed to get reasons from database");
                                         } else if( resultFromDatabase.equals("-100") ) {
                                             setEntryInfoFeed("Database connection failed");
                                         } else if( resultFromDatabase.equals("Something went wrong") ) {
                                             setEntryInfoFeed("Something went wrong");
                                         } else {
-                                        //parse JSON data
+                                            //parse JSON data
                                             try {
                                                 jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                                createRadioButton( personCountRadio, "count", jsonArrayFromDatabase );
+                                                createRadioButton( reasonRadio, "reason", jsonArrayFromDatabase );
                                             } catch (JSONException ex) {
                                                 ex.printStackTrace();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
 
-                                        //getting reasons from database
-                                            type = "get_reasons";
-                                            resultFromDatabase = new DatabaseActions().execute( server_url, type ).get();
-
-                                            if( resultFromDatabase.equals("0") ) {
-                                                setEntryInfoFeed("Failed to get reasons from database");
-                                            } else if( resultFromDatabase.equals("-100") ) {
-                                                setEntryInfoFeed("Database connection failed");
-                                            } else if( resultFromDatabase.equals("Something went wrong") ) {
-                                                setEntryInfoFeed("Something went wrong");
-                                            } else {
-                                                //parse JSON data
-                                                try {
-                                                    jsonArrayFromDatabase = new JSONArray( resultFromDatabase );
-                                                    createRadioButton( reasonRadio, "reason", jsonArrayFromDatabase );
-                                                } catch (JSONException ex) {
-                                                    ex.printStackTrace();
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-
                                             //displaying the entry info layout
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        entryInfoLayout.setVisibility(View.VISIBLE);
-                                                        setEntryInfoFeed("");
-                                                    }
-                                                });
-                                            }
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    entryInfoLayout.setVisibility(View.VISIBLE);
+                                                    setEntryInfoFeed("");
+                                                }
+                                            });
                                         }
                                     }
                                 }
@@ -240,6 +217,7 @@ public class ScanResult extends AppCompatActivity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                personEntryData.put( "count", "NA" );
                 if( personEntryData.containsKey("name") && personEntryData.containsKey("roll") && personEntryData.containsKey("status") && personEntryData.containsKey("gate") && personEntryData.containsKey("count") && personEntryData.containsKey("reason") ) {
                     setEntryInfoFeed("");
                     loadingAnimation.setVisibility(View.VISIBLE);
@@ -422,7 +400,7 @@ public class ScanResult extends AppCompatActivity {
 
         statusRadio                     = findViewById(R.id.statusRadio);
         gateRadio                       = findViewById(R.id.gateRadio);
-        personCountRadio                = findViewById(R.id.personCountRadio);
+//        personCountRadio                = findViewById(R.id.personCountRadio);
         reasonRadio                     = findViewById(R.id.reasonRadio);
 
         submitBtn                       = findViewById(R.id.submitBtn);
