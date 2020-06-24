@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     //creating radio buttons
         jsonArrayFromDatabase.put("http://172.16.26.43");
-        jsonArrayFromDatabase.put("http://mngo.in");
+//        jsonArrayFromDatabase.put("http://mngo.in");
         createRadioButton( serverRadio, "count", jsonArrayFromDatabase );
 
     //on clicking on continue btn
